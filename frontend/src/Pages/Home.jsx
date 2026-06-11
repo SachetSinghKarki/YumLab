@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Hero from '../Components/Hero'
 import FoodCard from '../Components/FoodCard'
 
@@ -52,9 +52,28 @@ const filterOptions = [
   },
 ]
 
+const getRecipeSearchText = (recipe) => {
+  const ingredients = Array.from({ length: 20 }, (_, index) => recipe[`strIngredient${index + 1}`])
+    .filter(Boolean)
+    .join(' ')
+
+  return [
+    recipe.strMeal,
+    recipe.strArea,
+    recipe.strCategory,
+    recipe.strTags,
+    recipe.strInstructions,
+    ingredients,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+}
+
 const Home = () => {
   const [recipes, setRecipes] = useState([])
   const [activeFilter, setActiveFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -88,10 +107,28 @@ const Home = () => {
       })
   }, [])
 
-  const visibleRecipes =
+  const filteredByDiet =
     activeFilter === 'all'
       ? recipes
       : recipes.filter((recipe) => recipe.dietType === activeFilter)
+
+  const searchTerms = searchQuery
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+
+  const visibleRecipes = useMemo(() => {
+    if (searchTerms.length === 0) {
+      return filteredByDiet
+    }
+
+    return filteredByDiet.filter((recipe) => {
+      const recipeSearchText = getRecipeSearchText(recipe)
+
+      return searchTerms.every((term) => recipeSearchText.includes(term))
+    })
+  }, [filteredByDiet, searchTerms])
 
   const filterCounts = filterOptions.reduce((counts, option) => {
     counts[option.value] =
@@ -103,7 +140,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#fff8ef]">
-      <Hero />
+      <Hero
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        resultCount={visibleRecipes.length}
+        totalCount={recipes.length}
+        loading={loading}
+      />
 
       <section className="bg-linear-to-b from-[#160d07] via-[#fff1df] to-[#fff8ef] px-4 py-16 sm:px-6 lg:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
@@ -122,7 +165,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="px-4 pb-20 sm:px-6 lg:px-10">
+      <section id="recipes" className="scroll-mt-24 px-4 pb-20 sm:px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
@@ -130,13 +173,15 @@ const Home = () => {
                 Curated MealDB recipes
               </span>
               <h2 className="mt-5 max-w-2xl font-serif text-4xl font-bold leading-tight text-[#1a1008] sm:text-5xl lg:text-6xl">
-                Pick your plate, then open the full cooking detail.
+                {searchQuery.trim()
+                  ? `Fresh matches for "${searchQuery.trim()}".`
+                  : 'Pick your plate, then open the full cooking detail.'}
               </h2>
             </div>
             <p className="max-w-2xl text-base leading-8 text-[#755943]">
-              Veg favorites and chicken specials now load together from MealDB.
-              Tap a recipe to see ingredients, steps, tags, source notes, and the
-              video option in one calm cooking view.
+              {searchQuery.trim()
+                ? 'Search looks through recipe names, areas, categories, tags, instructions, and ingredients so small cravings can still find the right plate.'
+                : 'Veg favorites and chicken specials now load together from MealDB. Tap a recipe to see ingredients, steps, tags, source notes, and the video option in one calm cooking view.'}
             </p>
           </div>
 
@@ -216,11 +261,24 @@ const Home = () => {
           {!loading && visibleRecipes.length === 0 && (
             <div className="rounded-[28px] border border-orange-100 bg-white p-8 text-center shadow-[0_20px_58px_rgba(154,79,20,0.1)]">
               <p className="font-serif text-2xl font-bold text-[#1a1008]">
-                No recipes found here yet.
+                {searchQuery.trim()
+                  ? 'No cozy recipe matches yet.'
+                  : 'No recipes found here yet.'}
               </p>
               <p className="mt-2 text-sm text-[#755943]">
-                Try another filter to keep cooking.
+                {searchQuery.trim()
+                  ? `We could not find "${searchQuery.trim()}" in this little collection. Try a gentler keyword like chicken, curry, pasta, tomato, or clear the filters.`
+                  : 'Try another filter to keep cooking.'}
               </p>
+              {searchQuery.trim() && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="mt-5 rounded-full bg-linear-to-r from-orange-400 to-red-500 px-6 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(249,115,22,0.28)] transition duration-200 hover:-translate-y-0.5"
+                >
+                  Clear search
+                </button>
+              )}
             </div>
           )}
         </div>

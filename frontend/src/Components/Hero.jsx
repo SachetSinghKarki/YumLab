@@ -1,4 +1,13 @@
-const Hero = () => {
+const quickSearches = ['chicken', 'curry', 'pasta', 'tomato']
+
+const Hero = ({ searchQuery, onSearchChange, resultCount, totalCount, loading }) => {
+  const trimmedSearch = searchQuery.trim()
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault()
+    document.getElementById('recipes')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
     <section className="relative flex min-h-[calc(100vh-70px)] items-center overflow-hidden bg-[#160d07] px-4 py-16 sm:px-6 md:min-h-screen lg:px-10">
       <video
@@ -42,11 +51,111 @@ const Hero = () => {
             luxurious in its own little way.
           </p>
 
+          <form
+            onSubmit={handleSearchSubmit}
+            className="mt-8 max-w-2xl rounded-[28px] border border-white/20 bg-white/95 p-2 shadow-[0_24px_70px_rgba(0,0,0,0.26)] backdrop-blur-xl"
+            role="search"
+          >
+            <label htmlFor="hero-recipe-search" className="sr-only">
+              Search recipes
+            </label>
+            <div className="flex items-center gap-2">
+              <span
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-orange-50 text-orange-500"
+                aria-hidden="true"
+              >
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </span>
+              <input
+                id="hero-recipe-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => onSearchChange(event.target.value)}
+                placeholder="Search recipes, ingredients, or cozy keywords"
+                className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#1a1008] outline-none placeholder:text-[#b38353] sm:text-base"
+              />
+              {trimmedSearch && (
+                <button
+                  type="button"
+                  onClick={() => onSearchChange('')}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#9b6a42] transition duration-200 hover:bg-orange-50 hover:text-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-100"
+                  aria-label="Clear recipe search"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+              )}
+              <button
+                type="submit"
+                className="hidden h-12 rounded-full bg-linear-to-r from-orange-400 to-red-500 px-6 text-sm font-bold text-white shadow-[0_14px_34px_rgba(249,115,22,0.32)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(249,115,22,0.42)] focus:outline-none focus:ring-4 focus:ring-orange-200 sm:inline-flex sm:items-center"
+              >
+                Find
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-4 flex max-w-2xl flex-wrap items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">
+              Try
+            </span>
+            {quickSearches.map((keyword) => (
+              <button
+                key={keyword}
+                type="button"
+                onClick={() => onSearchChange(keyword)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-bold capitalize transition duration-200 hover:-translate-y-0.5 ${
+                  trimmedSearch.toLowerCase() === keyword
+                    ? 'border-orange-300 bg-orange-300 text-[#1a1008]'
+                    : 'border-white/15 bg-white/10 text-white/72 hover:bg-white/18'
+                }`}
+              >
+                {keyword}
+              </button>
+            ))}
+            <span className="ml-0 text-xs font-medium text-white/50 sm:ml-2">
+              {loading
+                ? 'Warming up the recipe shelf...'
+                : trimmedSearch
+                  ? `${resultCount} of ${totalCount} recipes match`
+                  : `${totalCount} recipes ready to browse`}
+            </span>
+          </div>
+
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <button className="h-12 rounded-full bg-linear-to-r from-orange-400 to-red-500 px-7 text-sm font-bold text-white shadow-[0_14px_34px_rgba(249,115,22,0.38)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(249,115,22,0.48)]">
+            <button
+              type="button"
+              onClick={() => document.getElementById('recipes')?.scrollIntoView({ behavior: 'smooth' })}
+              className="h-12 rounded-full bg-linear-to-r from-orange-400 to-red-500 px-7 text-sm font-bold text-white shadow-[0_14px_34px_rgba(249,115,22,0.38)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(249,115,22,0.48)]"
+            >
               Start Learning
             </button>
-            <button className="h-12 rounded-full border border-white/20 bg-white/10 px-7 text-sm font-bold text-white shadow-[0_14px_34px_rgba(0,0,0,0.18)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:bg-white/18">
+            <button
+              type="button"
+              onClick={() => document.getElementById('hero-recipe-search')?.focus()}
+              className="h-12 rounded-full border border-white/20 bg-white/10 px-7 text-sm font-bold text-white shadow-[0_14px_34px_rgba(0,0,0,0.18)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:bg-white/18"
+            >
               Watch Recipes
             </button>
           </div>
