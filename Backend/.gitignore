@@ -1,0 +1,95 @@
+# ┌─────────────────────────────────────────────────────────────┐
+# │                    Node.js / JavaScript                     │
+# └─────────────────────────────────────────────────────────────┘
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+bun.lockb
+
+# Build / dist output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+.env.example              # ← keep this one if you have a template
+credentials.json
+serviceAccount.json
+*.pem
+*.key
+*.cert
+
+# IDE / Editor folders
+.vscode/
+.idea/
+.sublime-
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Logs & temporary files
+*.log
+logs/
+log/
+tmp/
+temp/
+*.tmp
+*.temp
+coverage/
+.nyc_output/
+
+# MongoDB / database related (local dev)
+*.mongorc.js
+dump/
+mongodb-data/
+data/db/
+data/dump/
+
+# Testing artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Docker & containers
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+*.docker-compose.yml
+
+# Local development overrides
+*.local.js
+*.local.json
+config/local.*
+
+# Sometimes people commit these by mistake
+
+yarn.lock            # ← only if you're using npm
+pnpm-lock.yaml
+bun.lockb
+
+# ─────────────────────────────────────────────────────────────
+#            Keep these commented if you want to commit them
+# ─────────────────────────────────────────────────────────────
+# .env.example
+# README.md
+# docs/
