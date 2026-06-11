@@ -1,13 +1,14 @@
-const FoodCard = ({ recipe, index }) => {
-  const { strMeal, strArea, strCategory, strYoutube, strMealThumb } = recipe
+import { Link } from 'react-router-dom'
 
-  const handleYoutube = () => {
-    if (strYoutube) window.open(strYoutube, '_blank')
-  }
+const FoodCard = ({ recipe, index }) => {
+  const { strMeal, strArea, strCategory, strMealThumb, dietType } = recipe
+  const isVeg = dietType === 'veg'
 
   return (
-    <article
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-[0_20px_58px_rgba(154,79,20,0.1)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(154,79,20,0.18)]"
+    <Link
+      to={`/recipes/${recipe.idMeal}`}
+      state={{ recipe }}
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-[28px] border border-orange-100 bg-white text-left shadow-[0_20px_58px_rgba(154,79,20,0.1)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(154,79,20,0.18)] focus:outline-none focus:ring-4 focus:ring-orange-200"
       style={{ animation: 'fadeUp 0.5s ease both', animationDelay: `${index * 70}ms` }}
     >
       <div className="relative h-52 overflow-hidden">
@@ -22,20 +23,21 @@ const FoodCard = ({ recipe, index }) => {
           {strCategory}
         </span>
 
-        {strYoutube && (
-          <button
-            type="button"
-            onClick={handleYoutube}
-            className="absolute inset-0 flex items-center justify-center bg-[#1a1008]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            aria-label={`Watch ${strMeal} lesson on YouTube`}
-          >
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-red-500 shadow-[0_18px_45px_rgba(0,0,0,0.28)] transition-transform duration-200 hover:scale-105">
-              <svg className="ml-1 h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-          </button>
-        )}
+        <span
+          className={`absolute right-4 top-4 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm backdrop-blur ${
+            isVeg
+              ? 'border border-emerald-100 bg-emerald-50/95 text-emerald-600'
+              : 'border border-rose-100 bg-rose-50/95 text-rose-600'
+          }`}
+        >
+          {isVeg ? 'Veg' : 'Non Veg'}
+        </span>
+
+        <div className="absolute inset-0 flex items-end bg-[#1a1008]/0 p-4 opacity-0 transition-all duration-300 group-hover:bg-[#1a1008]/24 group-hover:opacity-100">
+          <span className="rounded-full bg-white px-4 py-2 text-xs font-bold text-[#1a1008] shadow-[0_14px_34px_rgba(0,0,0,0.2)]">
+            View recipe details
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -46,25 +48,17 @@ const FoodCard = ({ recipe, index }) => {
           {strMeal}
         </h2>
         <p className="text-sm leading-6 text-[#7a6148]">
-          Follow a guided video and learn the little details that make this dish
-          feel polished at home.
+          Open the full detail to see ingredients, cooking instructions, source
+          notes, and the video lesson when available.
         </p>
 
         <div className="mt-auto flex items-center justify-between border-t border-orange-100 pt-4">
-          {strYoutube ? (
-            <button
-              type="button"
-              onClick={handleYoutube}
-              className="rounded-full bg-[#1a1008] px-4 py-2 text-xs font-bold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-orange-500"
-            >
-              Start lesson
-            </button>
-          ) : (
-            <span className="text-xs font-semibold text-[#b69b82]">Lesson coming soon</span>
-          )}
+          <span className="rounded-full bg-[#1a1008] px-4 py-2 text-xs font-bold text-white transition duration-200 group-hover:-translate-y-0.5 group-hover:bg-orange-500">
+            View details
+          </span>
 
           <span className="rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-orange-500">
-            Video
+            YumLab
           </span>
         </div>
       </div>
@@ -77,7 +71,7 @@ const FoodCard = ({ recipe, index }) => {
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-    </article>
+    </Link>
   )
 }
 

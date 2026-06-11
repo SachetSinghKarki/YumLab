@@ -8,6 +8,7 @@ import Register from './Pages/Register'
 import Profile from './Pages/Profile'
 import About from './Pages/About'
 import Contact from './Pages/Contact'
+import FoodDetail from './Pages/FoodDetail'
 import { AuthContext } from './Context/AuthContextValue'
 
 const ProtectedRoute = ({ children }) => {
@@ -67,6 +68,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/recipes/:id"
+          element={
+            <ProtectedRoute>
+              <FoodDetail />
+              <Footer />
             </ProtectedRoute>
           }
         />

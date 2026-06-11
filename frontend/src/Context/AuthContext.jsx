@@ -7,7 +7,13 @@ export const AuthContextProvider = ({children}) =>{
     );
 
     const updateUser = (data) =>{
-        setCurrentUser(data)
+        setCurrentUser((previousUser) => {
+            if (data && previousUser?.token && !data.token) {
+                return { ...data, token: previousUser.token }
+            }
+
+            return data
+        })
     }
 
     useEffect (() => {

@@ -10,11 +10,23 @@ import cors from "cors"
 dotenv.config();
 const app = express();
 app.use(cookieParser())
+const allowedOrigins = [
+  "https://yum-lab.vercel.app",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+
 app.use(cors({
-  origin:"https://yum-lab.vercel.app", 
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials:true
 }))
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 
 app.get("/", (req, res) => {
   res.send("This is my Home Page");
